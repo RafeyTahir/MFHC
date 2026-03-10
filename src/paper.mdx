@@ -55,15 +55,12 @@ import dogsDiffc from "./assets/dogs-diffc.png"
 import dogsTrue from "./assets/dogs-true.png"
 import dogsMsillm from "@/assets/dogs-msillm.jpg"
 
-
 <HighlightedSection>
 
 ## Abstract
-
-This work proposes a **hierarchical model-free control framework** for generating **stable limit cycles** in underactuated mechanical systems. The framework consists of a high-level controller that generates reference trajectories while ensuring stable internal dynamics, and a low-level **model-free controller** that tracks these references on the unactuated coordinates.
-
-The proposed approach achieves accurate tracking without requiring explicit knowledge of the system dynamics, while retaining robustness and formal stability guarantees. The framework is validated on multiple benchmark systems, including the **Rotary Inverted Pendulum (RIP)** and **Vertical Take-Off and Landing (VTOL)** aircraft model through both simulations and real-time hardware experiments, and on a **leg–foot system on deformable ground** in simulation.
-
+<div style="text-align: justify;">
+We propose a hierarchical model-free control framework for generating stable limit cycles in underactuated nonlinear systems. The approach combines a high-level reference generator with a robust adaptive low-level controller that requires only joint measurements, eliminating the need for explicit system models. The method ensures stability while producing periodic motion in both actuated and unactuated coordinates. The framework is validated through hardware experiments on a rotary inverted pendulum and a VTOL aircraft model, and simulations on additional benchmarks including the cart-pole and leg–foot systems, demonstrating strong robustness and performance compared to existing model-free approaches.
+</div>
 </HighlightedSection>
 
 ---
@@ -73,20 +70,195 @@ The proposed approach achieves accurate tracking without requiring explicit know
 The control architecture is organized hierarchically.  
 The **high-level controller** generates reference trajectories that induce a desired periodic motion, while the **low-level controller** ensures robust tracking of these trajectories despite uncertainty and underactuation.
 
-{/* <Figure>
-  <img src="/images/DuaLMFC2_1.png" alt="Framework overview" />
+<Figure>
+  <img src="/public/DuaLMFC2_1.png" alt="Framework overview" />
   <Fragment slot="caption">
     Overview of the proposed hierarchical model-free control framework.
   </Fragment>
-</Figure> */}
+</Figure>
 
 ---
 
-## Experimental Platforms
+## Results Implementation Examples
 
-### Rotary Inverted Pendulum (RIP)
+To demonstrate the effectiveness and generality of the proposed hierarchical model-free control framework, the controller is implemented on four benchmark **underactuated mechanical systems**:
 
-The proposed framework is experimentally validated on a **QNET 2.0 Rotary Inverted Pendulum**, demonstrating stable limit-cycle generation and robustness under real-world uncertainties.
+- Rotary Inverted Pendulum (RIP)
+- Acrobot
+- Segway
+- Leg–Foot model on deformable ground
+
+These systems represent a wide class of nonlinear underactuated dynamics and provide a comprehensive validation of the proposed control framework.
+
+---
+
+# 1. Rotary Inverted Pendulum (RIP)
+
+The **Rotary Inverted Pendulum (RIP)** consists of a horizontally rotating arm driven by a motor and a pendulum attached at the end of the arm. The rotary arm is actuated while the pendulum motion remains unactuated, making the system underactuated and strongly nonlinear.
+
+The dynamics of the system can be written as
+
+$$
+\begin{aligned}
+(m_{p}L^{2}_{r} + J_{r})\ddot{\theta}_{a} - \frac{1}{2}m_{p}L_{p}\ddot{\theta}_{u} &= \tau, \\
+\frac{1}{2}m_{p}L_{p}\ddot{\theta}_{a} + \left(J_{p} + \frac{1}{4}m_{p}L^{2}_{p}\right)\ddot{\theta}_{u}
++ \frac{m_{p}L_{p}g\theta_{u}}{2} &= 0 .
+\end{aligned}
+$$
+
+### Parameter Specification of RIP
+
+| Parameter | Description | Value | Unit |
+|---|---|---|---|
+| $L_{p}$ | Length of the Pendulum | 0.129 | m |
+| $L_{r}$ | Length of the Rotary Arm | 0.085 | m |
+| $m_{p}$ | Mass of the Pendulum | 0.024 | kg |
+| $J_{p}$ | Pendulum Inertia | $3.3\times10^{-5}$ | kg·m² |
+| $J_{r}$ | Rotary Arm Inertia | $5.7\times10^{-5}$ | kg·m² |
+| $A$ | Oscillation amplitude | 5 | deg |
+| $T$ | Oscillation period | 2 | s |
+| $g$ | Gravitational acceleration | 9.8 | m/s² |
+
+---
+
+# 2. Acrobot
+
+The **Acrobot** is a two-link planar robot where only the second joint is actuated. The first joint remains unactuated, making the system a classical benchmark for nonlinear underactuated control.
+
+The dynamics can be expressed as
+
+$$
+\begin{aligned}
+d_{11}\ddot{q}_{u}+d_{12}\ddot{q}_{a} + h_{u} + \phi_{u} &=0, \\
+d_{21}\ddot{q}_{u}+d_{22}\ddot{q}_{a} + h_{a} + \phi_{a} &= \tau .
+\end{aligned}
+$$
+
+where
+
+$$
+\begin{aligned}
+d_{11}&= m_{1}l_{c1}^{2} + m_{2}(l^{2}_{1} + l^{2}_{c2} +2l_{1}l_{c2}\cos(q_{a})) + I_{1} + I_{2},\\
+d_{22}&= m_{2}l^{2}_{c2}+I_{2},\\
+d_{12}&= m_{2}(l_{c2}^{2} + l_{1}l_{c2}\cos(q_{a})) + I_{2},\\
+d_{21}&= m_{2}(l^{2}_{c2} + l_{1}l_{c2}\cos(q_{a})) + I_{2},\\
+h_{1} &= -m_{2}l_{1}l_{c2}\sin(q_{a})\dot{q}_{a}^{2} -2m_{2}l_{1}l_{c2}\sin(q_{a})\dot{q}_{a}\dot{q}_{u},\\
+h_{2} &= m_{2}l_{1}l_{c2}\sin(q_{a})\dot{q}_{u}^{2},\\
+\phi_{1} &= (m_{1}l_{c1}+m_{2}l_{1})g\cos(q_{u}) + m_{2}l_{c2}g\cos(q_{u}+q_{a}),\\
+\phi_{2} &= m_{2}l_{c2}g\cos(q_{u}+q_{a}).
+\end{aligned}
+$$
+
+### Parameter Specification of Acrobot
+
+| Parameter | Description | Value | Unit |
+|---|---|---|---|
+| $m_{1}$ | Mass of the first link | 1 | kg |
+| $m_{2}$ | Mass of the second link | 1 | kg |
+| $l_{1}$ | Length of link 1 | 1 | m |
+| $l_{2}$ | Length of link 2 | 1 | m |
+| $l_{c1}$ | COM of link 1 | 0.5 | m |
+| $l_{c2}$ | COM of link 2 | 0.5 | m |
+| $I_{1}$ | Inertia of link 1 | 0.083 | kg·m² |
+| $I_{2}$ | Inertia of link 2 | 0.33 | kg·m² |
+| $g$ | Gravitational acceleration | 9.8 | m/s² |
+
+---
+
+# 3. Segway
+
+The **Segway system** represents a wheeled inverted pendulum where the wheel motion is actuated while the body pitch evolves as an unactuated coordinate. This system is widely used to study balancing and locomotion control.
+
+The equations of motion are
+
+$$
+\begin{aligned}
+H_{1}\ddot{x} + (H_{2}\cos\theta)\ddot{\theta} - (H_{6}\sin\theta)\dot{\theta}^{2} &= \tau, \\
+(H_{3}\cos\theta)\ddot{x} + H_{4}\ddot{\theta} - H_{5}\sin\theta &= -K\tau .
+\end{aligned}
+$$
+
+### Parameter Specification of Segway
+
+| Parameter | Description | Value | Unit |
+|---|---|---|---|
+| $M$ | Mass of robot body | 3.5 | kg |
+| $m$ | Mass of wheel | 2 | kg |
+| $l$ | Length of leg | 0.2 | m |
+| $I_{w}$ | Wheel inertia | 0.0266 | kg·m² |
+| $I_{r}$ | Robot body inertia | 0.0043 | kg·m² |
+| $r$ | Wheel radius | 0.05 | m |
+
+---
+
+# 4. Leg–Foot Model on Deformable Ground
+
+The **Leg–Foot model** represents a simplified locomotion system interacting with deformable terrain. The model consists of three coordinates and exhibits complex nonlinear coupling due to ground compliance.
+
+The dynamics are given by
+
+$$
+M(q)\ddot{q} + C(q,\dot{q})\dot{q} + H(q) = \tau .
+$$
+
+where
+
+$$
+q =
+\begin{bmatrix}
+y & \theta & \alpha
+\end{bmatrix}^T
+$$
+
+and
+
+$$
+M =
+\begin{bmatrix}
+m_{f}+m_{l}& -l_{cm}m_{l}\sin(\theta+\alpha) & -l_{cm}m_{l}\sin(\theta+\alpha)\\
+-l_{cm}m_{l}\sin(\theta+\alpha)&m_{l}l_{cm}^{2}+I_{f}+I_{l}&m_{l}l_{cm}^{2}+I_{l}\\
+-l_{cm}m_{l}\sin(\theta+\alpha)&m_{l}l^{2}+I_{l}&m_{l}l^{2}+I_{l}
+\end{bmatrix}
+$$
+
+$$
+C =
+\begin{bmatrix}
+0&-l_{cm}m_{l}\cos(\theta+\alpha)(\dot{\theta}+2\dot{\alpha})&-l_{cm}m_{l}\cos(\theta+\alpha)\dot{\alpha}\\
+0&0&0\\
+0&0&0
+\end{bmatrix}
+$$
+
+$$
+H =
+\begin{bmatrix}
+g(m_{f}+m_{l}) + 2ky\\
+k\delta^{2}\sin(2\theta)-gl_{cm}m_{l}\sin(\theta+\alpha)\\
+-gl_{cm}m_{l}\sin(\theta+\alpha)
+\end{bmatrix},
+\quad
+\tau =
+\begin{bmatrix}
+0\\
+0\\
+u
+\end{bmatrix}
+$$
+
+### Parameter Specification of Leg-Foot Model
+
+| Parameter | Description | Value | Unit |
+|---|---|---|---|
+| $m_{l}$ | Mass of the leg | 1 | kg |
+| $m_{f}$ | Mass of the foot | 0.2 | kg |
+| $l$ | Length of the leg | 40 | cm |
+| $I_{f}$ | Inertia of foot | 0.0166 | kg·m² |
+| $I_{l}$ | Inertia of leg | 0.083 | kg·m² |
+| $\delta$ | Distance from ankle to tip | 15 | cm |
+| $k$ | Ground stiffness constant | $5\times10^{3}$ | N/m |
+
+---
 
 {/* <Figure>
   <img src="/images/Setup_RIP.png" alt="Framework overview" />
