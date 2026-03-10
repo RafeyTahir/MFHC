@@ -65,17 +65,22 @@ We propose a hierarchical model-free control framework for generating stable lim
 
 ---
 
+## Problem Statement and Proposed Approach
+
+Underactuated mechanical systems are challenging to control because they possess fewer actuators than degrees of freedom. This work proposes a dual model-free control framework with a robust adaptive controller that extends existing model-free approaches to underactuated systems while preserving robustness and optimality properties. The effectiveness of the proposed strategy is demonstrated on several benchmark systems, including the rotary inverted pendulum, VTOL aircraft model, cart–pole, and leg–foot model, showing improved robustness, simplicity, and performance compared to other model-free control techniques.
+
+### Limit-Cycle Generation
+
+A limit cycle is a closed trajectory in the phase plane of a nonlinear dynamical system that attracts nearby trajectories, producing stable periodic motion. Designing limit cycles enables systems to generate desired repetitive behaviors, such as stable locomotion in walking robots. Due to these properties, limit cycle dynamics are widely applied in robotics, mechanical systems, electrical engineering, power electronics, and chemical processes.
 ## Framework Overview
 
-The control architecture is organized hierarchically.  
-The **high-level controller** generates reference trajectories that induce a desired periodic motion, while the **low-level controller** ensures robust tracking of these trajectories despite uncertainty and underactuation.
+The control architecture is organized hierarchically. The **high-level controller** generates reference trajectories that induce a desired periodic motion, while the **low-level controller** ensures robust tracking of these trajectories despite uncertainty and underactuation.
 
-<Figure>
-  <img src="/DuaLMFC2_1.png" alt="Framework overview" />
-  <Fragment slot="caption">
-    Overview of the proposed hierarchical model-free control framework.
-  </Fragment>
-</Figure>
+<img
+  src="/DuaLMFC2_1.png"
+  alt="Framework overview"
+  style="display:block; max-width:900px; width:100%; margin: 0 auto;"
+/>
 
 ---
 
@@ -93,6 +98,13 @@ These systems represent a wide class of nonlinear underactuated dynamics and pro
 ---
 
 # 1. Rotary Inverted Pendulum (RIP)
+
+<img
+  src="/Setup_RIP.png"
+  alt="Framework overview"
+  style="display:block; max-width:900px; width:100%; margin: 0 auto;"
+/>
+
 
 The **Rotary Inverted Pendulum (RIP)** consists of a horizontally rotating arm driven by a motor and a pendulum attached at the end of the arm. The rotary arm is actuated while the pendulum motion remains unactuated, making the system underactuated and strongly nonlinear.
 
@@ -269,9 +281,6 @@ $$
 
 ---
 
-### Limit-Cycle Generation
-
-Stable periodic motion is achieved in the underactuated coordinates while maintaining bounded internal dynamics.
 
 {/* <Figure>
   <img src="/images/Lmit_cycle_RIP_fast-ezgif.com-crop.gif" alt="Framework overview" />
@@ -282,34 +291,12 @@ Stable periodic motion is achieved in the underactuated coordinates while mainta
 
 ---
 
-## Simulation Studies
-
-The framework is further evaluated through simulation on:
-- Rotary Inverted Pendulum (RIP)
-- Vertical Take-Off and Landing (VTOL) aircraft model
-- Leg–foot system on deformable ground
-
-All simulations confirm excellent tracking performance, robustness to uncertainty, and preservation of closed-loop stability.
-
----
-
 ## Software and Hardware Implementation
 
 - **Simulation:** MATLAB / Simulink 2023b  
 - **Hardware:** QNET 2.0 Rotary Pendulum with NI LabVIEW Suite 2021  
 
 This repository provides all necessary code and configuration files to reproduce both simulation and experimental results.
-
----
-
-## Safety Notes
-
-When operating real systems, special care must be taken:
-
-- Limit motion range, torque, and speed using software and hardware constraints.
-- Maintain a safe distance from the robot during operation.
-- Ensure access to an emergency stop at all times.
-- Handle LiPo batteries with appropriate precautions.
 
 ---
 
