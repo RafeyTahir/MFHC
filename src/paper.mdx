@@ -2,53 +2,162 @@
 title: Model-Free Controller Design for Stable Limit-Cycle Generation in Underactuated Mechanical Systems
 authors:
   - name: Muhammad Rafey Tahir
-    url: https://github.com/RafeyTahir
+    url: https://rafeytahir.github.io/
     institution: École Centrale de Nantes
-conference: Under Review
+
+  - name: Muhammad Ali Murtaza
+    url: https://scholar.google.com/citations?hl=en&user=oE6XwXsAAAAJ
+    institution: ITU Lahore
+
+  - name: Rameez Hayat
+    url: https://scholar.google.com/citations?hl=en&user=sNOQFxwAAAAJ
+    institution: NUST
+
+  - name: Seth Hutchinson
+    url: https://scholar.google.com/citations?user=-JPZ21IAAAAJ&hl=en
+    institution: Northeastern University
+
+  - name: Usman Ali
+    url: https://scholar.google.com/citations?hl=en&user=832GvkEAAAAJ
+    institution: NUST
+
+conference: Accepted to appear in the Proceedings of the 2026 American Control Conference (ACC)
 links:
   - name: Code
     url: https://github.com/RafeyTahir/Model-Free-Controller-design-for-Stable-Limit-Cycle-Generation-in-Underactuated-Mechanical-Systems
     icon: ri:github-line
+
+  - name: Video
+    url: https://youtu.be/OIwE66wXiWY
+    icon: ri:youtube-line
+
 theme: device
 favicon: favicon.svg
-description: Model-free control framework for stable limit-cycle generation in underactuated mechanical systems with theoretical guarantees.
+description: Hierarchical model-free control framework for stable limit-cycle generation in underactuated mechanical systems with simulation and hardware validation.
 thumbnail: screenshot-light.png
 ---
-
+import Video from "./components/Video.astro";
 import HighlightedSection from "./components/HighlightedSection.astro";
+import SmallCaps from "./components/SmallCaps.astro";
+import Figure from "./components/Figure.astro";
+import Picture from "./components/Picture.astro";
+import ModelViewer from "./components/ModelViewer.astro"
+import TwoColumns from "./components/TwoColumns.astro";
+import YouTubeVideo from "./components/YouTubeVideo.astro";
+import Carousel from "./components/Carousel.astro";
+import CarouselSlide from "./components/CarouselSlide.astro";
+import Wide from "./components/Wide.astro";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/starwind/tabs";
+import { Comparison } from "./components/Comparison.tsx";
+
+import outside from "./assets/outside.mp4";
+import dogsDiffc from "./assets/dogs-diffc.png"
+import dogsTrue from "./assets/dogs-true.png"
+import dogsMsillm from "@/assets/dogs-msillm.jpg"
+
 
 <HighlightedSection>
 
 ## Abstract
 
-This work presents a **model-free control framework** for the generation of **stable limit cycles** in a class of **underactuated mechanical systems**. In contrast to conventional approaches that rely on precise system models, the proposed method does not require prior knowledge of the system dynamics and remains robust against parametric uncertainties and external disturbances.
+This work proposes a **hierarchical model-free control framework** for generating **stable limit cycles** in underactuated mechanical systems. The framework consists of a high-level controller that generates reference trajectories while ensuring stable internal dynamics, and a low-level **model-free controller** that tracks these references on the unactuated coordinates.
 
-The controller integrates adaptive mechanisms with nonlinear feedback to ensure convergence toward a desired periodic orbit while maintaining closed-loop stability. Rigorous theoretical guarantees are established using Lyapunov-based analysis. The effectiveness of the proposed approach is validated through simulation studies on representative underactuated mechanical systems, demonstrating reliable limit-cycle generation under uncertainty.
+The proposed approach achieves accurate tracking without requiring explicit knowledge of the system dynamics, while retaining robustness and formal stability guarantees. The framework is validated on multiple benchmark systems, including the **Rotary Inverted Pendulum (RIP)** and **Vertical Take-Off and Landing (VTOL)** aircraft model through both simulations and real-time hardware experiments, and on a **leg–foot system on deformable ground** in simulation.
 
 </HighlightedSection>
 
-## Problem Setting
+---
 
-Underactuated mechanical systems are characterized by having fewer control inputs than degrees of freedom, making control design particularly challenging. Generating stable rhythmic motions in such systems is a fundamental problem in robotics and nonlinear control, with applications in locomotion, manipulation, and energy-efficient motion generation.
+## Framework Overview
 
-## Proposed Method
+The control architecture is organized hierarchically.  
+The **high-level controller** generates reference trajectories that induce a desired periodic motion, while the **low-level controller** ensures robust tracking of these trajectories despite uncertainty and underactuation.
 
-The proposed controller is designed in a **model-free** manner, eliminating the need for explicit knowledge of inertia, Coriolis, or gravitational terms. Adaptive laws are introduced to compensate for unknown dynamics while ensuring boundedness of all closed-loop signals.
+{/* <Figure>
+  <img src="/images/DuaLMFC2_1.png" alt="Framework overview" />
+  <Fragment slot="caption">
+    Overview of the proposed hierarchical model-free control framework.
+  </Fragment>
+</Figure> */}
 
-## Stability Analysis
+---
 
-Closed-loop stability and convergence to the desired limit cycle are proven using Lyapunov-based arguments. The analysis guarantees robustness with respect to modeling uncertainties and bounded disturbances.
+## Experimental Platforms
 
-## Simulation Results
+### Rotary Inverted Pendulum (RIP)
 
-Simulation studies demonstrate that the proposed control framework successfully generates and stabilizes the desired limit cycle, even in the presence of significant uncertainty and disturbances.
+The proposed framework is experimentally validated on a **QNET 2.0 Rotary Inverted Pendulum**, demonstrating stable limit-cycle generation and robustness under real-world uncertainties.
+
+{/* <Figure>
+  <img src="/images/Setup_RIP.png" alt="Framework overview" />
+  <Fragment slot="caption">
+    Experimental setup of the rotary inverted pendulum platform.
+  </Fragment>
+</Figure> */}
+
+---
+
+### Limit-Cycle Generation
+
+Stable periodic motion is achieved in the underactuated coordinates while maintaining bounded internal dynamics.
+
+{/* <Figure>
+  <img src="/images/Lmit_cycle_RIP_fast-ezgif.com-crop.gif" alt="Framework overview" />
+  <Fragment slot="caption">
+    Stable limit-cycle generation in the rotary inverted pendulum.
+  </Fragment>
+</Figure> */}
+
+---
+
+## Simulation Studies
+
+The framework is further evaluated through simulation on:
+- Rotary Inverted Pendulum (RIP)
+- Vertical Take-Off and Landing (VTOL) aircraft model
+- Leg–foot system on deformable ground
+
+All simulations confirm excellent tracking performance, robustness to uncertainty, and preservation of closed-loop stability.
+
+---
+
+## Software and Hardware Implementation
+
+- **Simulation:** MATLAB / Simulink 2023b  
+- **Hardware:** QNET 2.0 Rotary Pendulum with NI LabVIEW Suite 2021  
+
+This repository provides all necessary code and configuration files to reproduce both simulation and experimental results.
+
+---
+
+## Safety Notes
+
+When operating real systems, special care must be taken:
+
+- Limit motion range, torque, and speed using software and hardware constraints.
+- Maintain a safe distance from the robot during operation.
+- Ensure access to an emergency stop at all times.
+- Handle LiPo batteries with appropriate precautions.
+
+---
+
+## Acknowledgments
+
+This work was carried out at the **School of Electrical Engineering and Computer Sciences**,  
+**National University of Sciences and Technology (NUST), Pakistan**.
+
+{/* <Figure>
+  <Picture slot="figure" src="/hardware/images/Logo_Underactuated_Lab.gif" />
+</Figure> */}
+
+---
 
 ## BibTeX
 
 ```bibtex
-@article{tahir2025mfhc,
-  author  = {Muhammad Rafey Tahir},
-  title   = {Model-Free Controller Design for Stable Limit-Cycle Generation in Underactuated Mechanical Systems},
+@article{tahir2025hierarchical_mf,
+  author  = {Tahir, Muhammad Rafey and Murtaza, Muhammad Ali and Hayat, Rameez and Hutchinson, Seth and Ali, Usman},
+  title   = {Hierarchical Model-Free Control Framework for Underactuated Mechanical Systems},
   year    = {2025},
   note    = {Under review}
 }
